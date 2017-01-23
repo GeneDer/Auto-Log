@@ -7,5 +7,9 @@ distance. Once the full distance is traveled, it will be removed.
 """
 
 import random
+from sf_map import SFMap
 
-
+my_map = SFMap()
+print len(my_map.map_pixels)
+print my_map.map_pixels[0][0].road_type
+print my_map.map_pixels[90][252].road_type
