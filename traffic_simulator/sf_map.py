@@ -35,13 +35,16 @@ class SFMap:
             for j in xrange(sf_map.size[1]):
                 if sf_map_pixel[i,j] == data1[0,0]:
                     self.map_pixels[i].append(Road(1))
-                    self.road_list.append((i,j))
+                    if i > 0 and i < 899 and j > 0 and j < 899:
+                        self.road_list.append((i,j))
                 elif sf_map_pixel[i,j] == data2[0,0]:
                     self.map_pixels[i].append(Road(2))
-                    self.road_list.append((i,j))
+                    if i > 0 and i < 899 and j > 0 and j < 899:
+                        self.road_list.append((i,j))
                 elif sf_map_pixel[i,j] == data3[0,0]:
                     self.map_pixels[i].append(Road(3))
-                    self.road_list.append((i,j))
+                    if i > 0 and i < 899 and j > 0 and j < 899:
+                        self.road_list.append((i,j))
                 else:
                     self.map_pixels[i].append(Road(0))
 
