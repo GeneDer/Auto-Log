@@ -8,8 +8,15 @@ distance. Once the full distance is traveled, it will be removed.
 
 import random
 from sf_map import SFMap
+from car import Car
 
 my_map = SFMap()
 print len(my_map.map_pixels)
 print my_map.map_pixels[0][0].road_type
 print my_map.map_pixels[90][252].road_type
+
+my_cars = []
+for i in xrange(1000):
+    my_cars.append(Car(i,(i*2, i*3)))
+
+print my_cars[123].distance_to_end, my_cars[123].current_location
