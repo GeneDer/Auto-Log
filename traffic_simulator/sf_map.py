@@ -33,13 +33,13 @@ class SFMap:
         for i in xrange(sf_map.size[0]):
             self.map_pixels.append([])
             for j in xrange(sf_map.size[1]):
-                if self.sf_map_pixel[i,j] == data1[0,0]:
+                if sf_map_pixel[i,j] == data1[0,0]:
                     self.map_pixels[i].append(Road(1))
                     self.road_list.append((i,j))
-                elif self.sf_map_pixel[i,j] == data2[0,0]:
+                elif sf_map_pixel[i,j] == data2[0,0]:
                     self.map_pixels[i].append(Road(2))
                     self.road_list.append((i,j))
-                elif self.sf_map_pixel[i,j] == data3[0,0]:
+                elif sf_map_pixel[i,j] == data3[0,0]:
                     self.map_pixels[i].append(Road(3))
                     self.road_list.append((i,j))
                 else:
@@ -47,7 +47,7 @@ class SFMap:
 
 
     def random_location(self):
-        idx = random.randint(0, len(self.road_dict) - 1)
+        idx = random.randint(0, len(self.road_list) - 1)
         loc = self.road_list[idx]
         self.map_pixels[loc[0]][loc[1]].cars += 1
         return loc
@@ -69,7 +69,7 @@ class SFMap:
         for location_offset in locations_to_check:
             tmp_location = (current_location[0] + location_offset[0],
                                current_location[1] + location_offset[1])
-            if check_location(tmp_location) and \
+            if self.check_location(tmp_location) and \
                tmp_location != pervious_location:
                 possible_location.append(tmp_location)
                 
