@@ -48,8 +48,8 @@ class Producer(object):
                 #lat, lon = location_convertor(my_cars[j].current_location)
 
                 # convert the indices, 10 x 10 grid for now
-                grid_id = my_cars[j].current_location[0]%10 +\
-                          90*(my_cars[j].current_location[1]%10)
+                grid_id = str(my_cars[car_id].current_location[0]/90 +\
+                          10*(my_cars[car_id].current_location[1]/90))
                 speed_field = my_cars[car_id].speed
                 str_fmt = "{};{};{};{}"
                 message_info = str_fmt.format(grid_id,
@@ -66,27 +66,14 @@ class Producer(object):
                     new_speed = my_cars[car_id].speed + random.randint(-10, 10)
                     if new_speed < 1:
                         new_speed = 1
-                    my_cars[car_id].move(25, new_location)
+                    my_cars[car_id].move(new_speed, new_location)
                 else:
                     my_cars[car_id] = Car(random.randint(1,100), my_map.random_location())
-
-        price_field = random.randint(800,1400)
-        while True:
-            time_field = datetime.now().strftime("%Y%m%d %H%M%S")
-            price_field += random.randint(-10, 10)/10.0
-            volume_field = random.randint(1, 1000)
-            str_fmt = "{};{};{};{}"
-            message_info = str_fmt.format(source_symbol,
-                                          time_field,
-                                          price_field,
-                                          volume_field)
-            print message_info
-            self.producer.send_messages('auto_log', source_symbol, message_info)
 
 
 if __name__ == "__main__":
     args = sys.argv
     ip_addr = str(args[1])
-    number_of_cars = args[2]
+    number_of_cars = int(args[2])
     prod = Producer(ip_addr)
     prod.produce_msgs(number_of_cars)
