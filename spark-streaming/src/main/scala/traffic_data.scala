@@ -6,7 +6,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkContext
 import org.apache.spark.sql._
-import com.redis._
+import com.redis.RedisClient
 
 object TrafficDataStreaming {
   def main(args: Array[String]) {
@@ -14,7 +14,6 @@ object TrafficDataStreaming {
     val brokers = "ec2-52-25-7-221.us-west-2.compute.amazonaws.com:9092"
     val topics = "auto_log"
     val topicsSet = topics.split(",").toSet
-    val r = new RedisClient("localhost", 6379)
 
     // Create context with 2 second batch interval
     val sparkConf = new SparkConf().setAppName("traffic_data")
@@ -39,9 +38,11 @@ object TrafficDataStreaming {
                                 .agg("speed" -> "avg", "volume" -> "sum")
                                 .orderBy("grid_id")
 	
-	var ticks_with_time = ticks_per_source_DF.map(x => {
-							    r.set(x(0),x(1).toString()+";"+x(2).toString())
-							   })
+	val r = new RedisClient("52.25.7.221", 6379, secret=Option("this is not real password XP"))
+	ticks_per_source_DF.foreach(t => {
+			r.set(t(0),t(1).toString()+";"+t(2).toString())
+		}
+	)
 
         ticks_per_source_DF.show()
     }
