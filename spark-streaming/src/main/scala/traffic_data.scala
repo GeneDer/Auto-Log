@@ -6,13 +6,15 @@ import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkContext
 import org.apache.spark.sql._
+import com.redis._
 
-object PriceDataStreaming {
+object TrafficDataStreaming {
   def main(args: Array[String]) {
 
-    val brokers = "ec2-52-34-75-116.us-west-2.compute.amazonaws.com:9092"
+    val brokers = "ec2-52-25-7-221.us-west-2.compute.amazonaws.com:9092"
     val topics = "auto_log"
     val topicsSet = topics.split(",").toSet
+    val r = new RedisClient("localhost", 6379)
 
     // Create context with 2 second batch interval
     val sparkConf = new SparkConf().setAppName("traffic_data")
@@ -30,14 +32,18 @@ object PriceDataStreaming {
 
         val lines = rdd.map(_._2)
         val ticksDF = lines.map( x => {
-                                  val tokens = x.split(";")
-                                  Tick(tokens(0), tokens(3).toDouble, 1)}).toDF()
-        val ticks_per_source_DF = ticksDF.groupBy("source")
+				       val tokens = x.split(";")
+                                       Tick(tokens(0), tokens(3).toDouble, 1)
+				      }).toDF()
+        val ticks_per_source_DF = ticksDF.groupBy("grid_id")
                                 .agg("speed" -> "avg", "volume" -> "sum")
-                                .orderBy("source")
+                                .orderBy("grid_id")
+	
+	var ticks_with_time = ticks_per_source_DF.map(x => {
+							    r.set(x(0),x(1).toString()+";"+x(2).toString())
+							   })
 
         ticks_per_source_DF.show()
-	
     }
 
     // Start the computation
@@ -46,7 +52,7 @@ object PriceDataStreaming {
   }
 }
 
-case class Tick(source: String, speed: Double, volume: Int)
+case class Tick(grid_id: String, speed: Double, volume: Int)
 
 /** Lazily instantiated singleton instance of SQLContext */
 object SQLContextSingleton {
