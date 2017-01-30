@@ -27,7 +27,7 @@ class Producer(object):
         # load SFMap test
         my_map = SFMap()
 
-        # generat cars according to the number_of_cars
+        # generate cars according to the number_of_cars
         my_cars = []
         for i in xrange(number_of_cars):
             my_cars.append(Car(random.randint(1,100), my_map.random_location()))
@@ -44,6 +44,7 @@ class Producer(object):
         time_field = 0
         while True:
             time_field += 1
+            my_map.reset_exit_cars()
             for car_id in xrange(number_of_cars):
                 #lat, lon = location_convertor(my_cars[j].current_location)
 

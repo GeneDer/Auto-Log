@@ -8,6 +8,7 @@ class Road:
     def __init__(self, road_type):
         self.road_type = road_type
         self.cars = 0
+        self.exit_cars = 0
 
 
 class SFMap:
@@ -58,7 +59,9 @@ class SFMap:
 
     def check_location(self, loc):
         if self.map_pixels[loc[0]][loc[1]].cars < \
-           self.map_pixels[loc[0]][loc[1]].road_type*5:
+           self.map_pixels[loc[0]][loc[1]].road_type*5 and \
+           self.map_pixels[loc[0]][loc[1]].exit_cars <= \
+           self.map_pixels[loc[0]][loc[1]].road_type*2:
             return True
         else:
             return False
@@ -81,10 +84,15 @@ class SFMap:
         else:
             new_location = random.choice(possible_location)
             self.map_pixels[new_location[0]][new_location[1]].cars += 1
-            self.map_pixels[current_location[0]][current_location[1]].cars += 1
+            self.map_pixels[current_location[0]][current_location[1]].cars -= 1
+            self.map_pixels[current_location[0]][current_location[1]].exit_cars += 1
             return new_location
         
             
-
-
+    def reset_exit_cars(self):
+        for i in len(self.map_pixels):
+            for j in len(self.map_pixels[0]):
+                self.map_pixels[i][j].exit_cars = 0
+                
+    
         
