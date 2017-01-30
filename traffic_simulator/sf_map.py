@@ -80,7 +80,7 @@ class SFMap:
                 possible_location.append(tmp_location)
                 
         if len(possible_location) == 0:
-            return current_location
+            return (current_location, 0, 0)
         else:
             new_location = random.choice(possible_location)
             self.map_pixels[new_location[0]][new_location[1]].cars += 1
@@ -92,8 +92,8 @@ class SFMap:
         
             
     def reset_exit_cars(self):
-        for i in len(self.map_pixels):
-            for j in len(self.map_pixels[0]):
+        for i in xrange(len(self.map_pixels)):
+            for j in xrange(len(self.map_pixels[0])):
                 self.map_pixels[i][j].exit_cars = 0
                 
     
