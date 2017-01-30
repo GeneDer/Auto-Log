@@ -11,6 +11,7 @@ import random
 from sf_map import SFMap
 from car import Car
 
+import numpy as np
 import random
 import sys
 
@@ -41,6 +42,25 @@ class Producer(object):
 
             return (y0 + location[1]*y, x0 + location[0]*x)
 
+        # generate new speed
+        def generate_new_speed(current_speed, road_type, number_of_car):
+            speed_offset = abs(np.random.normal(0,5))
+            if number_of_car*2 > road_type*5:
+                current_speed -= speed_offset
+                if current_speed < 0:
+                    current_speed = 0
+            else:
+                current_speed += speed_offset
+                if road_type == 1:
+                    if current_speed > 30:
+                        current_speed = 30
+                elif road_type == 2:
+                    if current_speed > 50:
+                        current_speed = 50
+                elif current_speed > 70:
+                    current_speed = 40
+            return current_speed
+
         time_field = 0
         while True:
             time_field += 1
@@ -48,9 +68,12 @@ class Producer(object):
             for car_id in xrange(number_of_cars):
                 #lat, lon = location_convertor(my_cars[j].current_location)
 
-                # convert the indices, 10 x 10 grid for now
-                grid_id = str(my_cars[car_id].current_location[0]/90 +\
-                          10*(my_cars[car_id].current_location[1]/90))
+##                # convert the indices, 10 x 10 grid for now
+##                grid_id = str(my_cars[car_id].current_location[0]/90 +\
+##                          10*(my_cars[car_id].current_location[1]/90))
+                grid_id = str(my_cars[car_id].current_location[0] +\
+                          my_cars[car_id].current_location[1])
+                
                 speed_field = my_cars[car_id].speed
                 str_fmt = "{};{};{};{}"
                 message_info = str_fmt.format(grid_id,
@@ -60,13 +83,18 @@ class Producer(object):
                 print message_info
                 self.producer.send_messages('auto_log', grid_id, message_info)
                 
-                new_location = my_map.move_location(my_cars[car_id].current_location,
-                                                    my_cars[car_id].pervious_location)
+                (new_location,
+                 road_type,
+                 number_of_car) = my_map.move_location(my_cars[car_id].current_location,
+                                                       my_cars[car_id].pervious_location)                    
                 if new_location[0] > 0 and new_location[0] < 899 and \
                    new_location[1] > 0 and new_location[1] < 899:
-                    new_speed = my_cars[car_id].speed + random.randint(-10, 10)
-                    if new_speed < 1:
-                        new_speed = 1
+                    if new_location == my_cars[car_id].current_location:
+                        new_speed = 0
+                    else:
+                        new_speed = generate_new_speed(my_cars[car_id].speed,
+                                                       road_type,
+                                                       number_of_car)
                     my_cars[car_id].move(new_speed, new_location)
                 else:
                     my_cars[car_id] = Car(random.randint(1,100), my_map.random_location())

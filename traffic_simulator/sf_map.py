@@ -86,7 +86,9 @@ class SFMap:
             self.map_pixels[new_location[0]][new_location[1]].cars += 1
             self.map_pixels[current_location[0]][current_location[1]].cars -= 1
             self.map_pixels[current_location[0]][current_location[1]].exit_cars += 1
-            return new_location
+            return (new_location,
+                    self.map_pixels[new_location[0]][new_location[1]].road_type,
+                    self.map_pixels[new_location[0]][new_location[1]].cars)
         
             
     def reset_exit_cars(self):
