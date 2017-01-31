@@ -17,14 +17,15 @@ object TrafficDataStreaming {
 
     // Create context with 2 second batch interval
     val sparkConf = new SparkConf().setAppName("traffic_data")
-    val ssc = new StreamingContext(sparkConf, Seconds(2))
+    val ssc = new StreamingContext(sparkConf, Seconds(10))
 
     // Create direct kafka stream with brokers and topics
     val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
     val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, topicsSet)
+    val windowStream = messages.window(Seconds(300), Seconds(10))
 
     // Get the lines and show results
-    messages.foreachRDD { rdd =>
+    windowStream.foreachRDD { rdd =>
 
         val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
         import sqlContext.implicits._
@@ -39,7 +40,7 @@ object TrafficDataStreaming {
                                 .orderBy("grid_id")
 	
 	val r = new RedisClient("52.25.7.221", 6379, secret=Option("this is not real password XP"))
-	ticks_per_source_DF.foreach(t => {
+	ticks_per_source_DF.collect().foreach(t => {
 			r.set(t(0),t(1).toString()+";"+t(2).toString())
 		}
 	)
