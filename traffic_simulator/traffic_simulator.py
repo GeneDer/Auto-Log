@@ -33,15 +33,6 @@ class Producer(object):
         for i in xrange(number_of_cars):
             my_cars.append(Car(random.randint(1,100), my_map.random_location()))
 
-        # convert the pixel into lat and long
-        def location_convertor(location):
-            x = (122.470891 - 122.391583)/(800 - 338)
-            y = -(37.813187 - 37.690489)/(900)
-            x0 = -122.478101 - 295*x
-            y0 = 37.813187
-
-            return (y0 + location[1]*y, x0 + location[0]*x)
-
         # generate new speed
         def generate_new_speed(current_speed, road_type, number_of_car):
             speed_offset = abs(np.random.normal(0,5))
@@ -69,10 +60,10 @@ class Producer(object):
                 #lat, lon = location_convertor(my_cars[j].current_location)
 
 ##                # convert the indices, 10 x 10 grid for now
-##                grid_id = str(my_cars[car_id].current_location[0]/90 +\
-##                          10*(my_cars[car_id].current_location[1]/90))
-                grid_id = str(my_cars[car_id].current_location[0] +\
-                          my_cars[car_id].current_location[1])
+##                grid_id = str(10*(my_cars[car_id].current_location[0]/90) +\
+##                          my_cars[car_id].current_location[1]/90)
+                grid_id = str(50*(my_cars[car_id].current_location[0])/18 +\
+                          my_cars[car_id].current_location[1]/18)
                 
                 speed_field = my_cars[car_id].speed
                 str_fmt = "{};{};{};{}"
