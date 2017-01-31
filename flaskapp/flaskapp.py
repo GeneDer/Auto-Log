@@ -6,7 +6,9 @@ app.config.from_object(__name__)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    
+    
+    return render_template("index.html", text1="hello world")
 
 @app.route('/api')
 def api():
