@@ -15,11 +15,14 @@ def query_all_data():
                           password=password)
     
     data = {}
+    max_volume = 1
     for key in r.scan_iter():
         val = r.get(key).split(';')
         data[key] = {"average speed": val[0],
                      "volume": val[1]}
-    return data
+        if int(val[1]) > max_volume:
+            max_volume = int(val[1])
+    return data, max_volume
 
 
 # convert the pixel into lat and long
@@ -30,13 +33,25 @@ def location_convertor(location):
     y0 = 37.813187
 
     return (y0 + location[1]*y, x0 + location[0]*x)
-        
+
+def get_colors(current_vol, max_vol):
+    color_level = 255*current_vol/max_vol
+    red = hex(color_level)[2:]
+    if len(red) == 1:
+        red = '0' + red
+    blue = hex(255 - color_level)[2:]
+    if len(blue) == 1:
+        blue = '0' + blue
+    color = "#%s00%s"%(red, blue)
+    return color
 
 @app.route('/')
 def index():
     import time
     t0 = time.time()
-    data = query_all_data()
+    data, max_volume = query_all_data()
+    #data, max_volume = {}, 1
+    
     print time.time() - t0
 
     t0 = time.time()
@@ -53,18 +68,22 @@ def index():
                 volume = "traffic volume: %s"%data[grid_id]["volume"]
                 grids.append([lat1, lon1, lat2, lon2,
                               lat3, lon3, lat4, lon4,
-                              speed, volume])
+                              speed, volume,
+                              get_colors(int(data[grid_id]["volume"]),
+                                         max_volume)])
             else:
                 grids.append([lat1, lon1, lat2, lon2,
                               lat3, lon3, lat4, lon4,
-                              "average speed: NA", "traffic volume: 0"])
+                              "average speed: NA", "traffic volume: 0",
+                              get_colors(0, max_volume)])
     print time.time() - t0
     return render_template("index.html", grids=grids)
 
 
 @app.route('/api')
-def api():    
-    return jsonify(query_all_data())
+def api():
+    data, volume = query_all_data()
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run()

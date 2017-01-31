@@ -31,7 +31,10 @@
                 L.polygon([[{{ grid[0] }}, {{ grid[1] }}],
                            [{{ grid[2] }}, {{ grid[3] }}],
                            [{{ grid[4] }}, {{ grid[5] }}],
-                           [{{ grid[6] }}, {{ grid[7] }}]]).addTo(mymap).bindPopup("{{grid[8]}} <br> {{grid[9]}}");
+                           [{{ grid[6] }}, {{ grid[7] }}]])
+                           .setStyle({fillColor: '{{grid[10]}}',
+                                     weight: '1'})
+                           .addTo(mymap).bindPopup("{{grid[8]}} <br> {{grid[9]}}");
             {% endfor %}
             
             </script>
