@@ -71,7 +71,7 @@ class Producer(object):
                                               car_id,
                                               time_field,
                                               speed_field)
-                print message_info
+                #print message_info
                 self.producer.send_messages('auto_log', grid_id, message_info)
                 
                 (new_location,
