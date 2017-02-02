@@ -1,9 +1,20 @@
-# Auto-Log
-Insight Data Engineering Project
+# Auto Log
+Insight Data Engineering  
+Session 2017A
 
 ## Motivation
+Traffic is always a headache for getting from point A to point B. It is especially
+worse in the Bay Area durning the rush hours. Imagine you can have data from all 
+vehicles driving on the road. What can you do with it? Simply visualize the traffic
+density and average speed of each region can help city planer make better roads
+and reduce congestions. Delivery services can better route their trucks and increase
+efficiency. Navigation softwares can incorporate these data and further imporve user
+experience. 
 
 ## Data Pipeline
+
+## Product Screenshot
+![Alt text](product_screenshot?raw=true "Optional Title")
 
 ## Project Setups
 ### Clusters Setup
