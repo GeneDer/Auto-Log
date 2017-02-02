@@ -14,7 +14,7 @@ experience.
 ## Data Pipeline
 
 ## Product Screenshot
-![Alt text](product_screenshot?raw=true "Optional Title")
+![Alt text](product_screenshot.png?raw=true "Optional Title")
 
 ## Project Setups
 ### Clusters Setup
