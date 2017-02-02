@@ -6,11 +6,11 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 def query_all_data():
-    with open("key.txt", 'r') as o:
-        for i in o:
-            password = i.strip()
+    with open("/home/ubuntu/Auto-Log/flaskapp/key.txt", 'r') as key_file:
+        ip = key_file.readline().strip()
+        password = key_file.readline().strip()
     
-    r = redis.StrictRedis(host='52.25.7.221',
+    r = redis.StrictRedis(host=ip,
                           port=6379,
                           password=password)
     
@@ -47,14 +47,8 @@ def get_colors(current_vol, max_vol):
 
 @app.route('/')
 def index():
-    import time
-    t0 = time.time()
     data, max_volume = query_all_data()
-    #data, max_volume = {}, 1
     
-    print time.time() - t0
-
-    t0 = time.time()
     grids = []                 
     for i in xrange(0,901,18):
         for j in xrange(0,901,18):
@@ -76,7 +70,7 @@ def index():
                               lat3, lon3, lat4, lon4,
                               "average speed: NA", "traffic volume: 0",
                               get_colors(0, max_volume)])
-    print time.time() - t0
+
     return render_template("index.html", grids=grids)
 
 

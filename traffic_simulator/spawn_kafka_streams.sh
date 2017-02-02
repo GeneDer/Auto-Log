@@ -1,9 +1,9 @@
 #!/bin/bash
-# run by bash spawn_kafka_streams.sh <KAFKA_BROKER_PUBLIC_IP> <NUM_SPAWNS> <SESSION_NAME> <NUM_CARS>
+# run by bash spawn_kafka_streams.sh <KAFKA_BROKER_PUBLIC_IP> <SESSION_NAME> <NUM_CARS>
 IP_ADDR=$1
-NUM_SPAWNS=$2
-SESSION=$3
-NUM_CARS=$4
+NUM_SPAWNS=1
+SESSION=$2
+NUM_CARS=$3
 tmux new-session -s $SESSION -n bash -d
 for ID in `seq 1 $NUM_SPAWNS`;
 do

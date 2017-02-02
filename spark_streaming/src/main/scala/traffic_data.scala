@@ -11,7 +11,7 @@ import com.redis.RedisClient
 object TrafficDataStreaming {
   def main(args: Array[String]) {
 
-    val brokers = "ec2-52-25-7-221.us-west-2.compute.amazonaws.com:9092"
+    val brokers = "ec2-35-167-53-204.us-west-2.compute.amazonaws.com:9092"
     val topics = "auto_log"
     val topicsSet = topics.split(",").toSet
 
@@ -39,7 +39,7 @@ object TrafficDataStreaming {
                                 .agg("speed" -> "avg", "volume" -> "sum")
                                 .orderBy("grid_id")
 	
-	val r = new RedisClient("52.25.7.221", 6379, secret=Option("this is not real password XP"))
+	val r = new RedisClient("52.34.86.155", 6379, secret=Option("this is not real password XP"))
 	ticks_per_source_DF.collect().foreach(t => {
 			r.set(t(0),t(1).toString()+";"+t(2).toString())
 		}
