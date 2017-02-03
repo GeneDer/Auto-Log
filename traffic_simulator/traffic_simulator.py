@@ -14,8 +14,6 @@ from car import Car
 import numpy as np
 import random
 import sys
-import os
-import boto3
 
 from kafka.client import SimpleClient
 from kafka.producer import KeyedProducer
@@ -65,11 +63,6 @@ class Producer(object):
             return (y0 + location[1]*y, x0 + location[0]*x)
 
         time_field = 0
-        file_count = 0
-        file_name = "%s.txt"%file_count
-        message_count = 0
-        out_file = open(file_name, 'w')
-        s3 = boto3.resource('s3')
         while True:
             time_field += 1
             my_map.reset_exit_cars()
@@ -86,17 +79,6 @@ class Producer(object):
                                               time_field,
                                               speed_field)
                 #print message_info
-                out_file.write("%s,%s,%s,%s,%s\n"%(lat,lon,car_id,time_field,speed_field))
-                message_count += 1
-                if message_count == 2000000:
-                    out_file = open(file_name, 'rb')
-                    s3.Bucket('gene-der-su-traffic-data').put_object(Key=file_name,
-                                                                     Body=out_file)
-                    os.remove(file_name)
-                    file_count += 1
-                    file_name = "%s.txt"%file_count
-                    out_file = open(file_name, 'w')
-                    message_count = 0
                 self.producer.send_messages('auto_log', grid_id, message_info)
                 
                 (new_location,
