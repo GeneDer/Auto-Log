@@ -3,7 +3,8 @@ Car model for simulations
 """
 
 class Car:
-    def __init__(self, distance_to_end, current_location):
+    def __init__(self, car_id, distance_to_end, current_location):
+        self.car_id = car_id
         self.speed = 0
         self.distance_to_end = distance_to_end
         self.pervious_location = None

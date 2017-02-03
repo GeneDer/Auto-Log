@@ -14,6 +14,8 @@ from car import Car
 import numpy as np
 import random
 import sys
+import os
+import boto3
 
 from kafka.client import SimpleClient
 from kafka.producer import KeyedProducer
@@ -30,8 +32,9 @@ class Producer(object):
 
         # generate cars according to the number_of_cars
         my_cars = []
+        max_car_id = number_of_cars
         for i in xrange(number_of_cars):
-            my_cars.append(Car(random.randint(1,100), my_map.random_location()))
+            my_cars.append(Car(i, random.randint(1,100), my_map.random_location()))
 
         # generate new speed
         def generate_new_speed(current_speed, road_type, number_of_car):
@@ -52,43 +55,66 @@ class Producer(object):
                     current_speed = 40
             return current_speed
 
+        # convert the pixel into lat and long
+        def location_convertor(location):
+            x = (122.470891 - 122.391583)/(800 - 338)
+            y = -(37.813187 - 37.690489)/(900)
+            x0 = -122.478101 - 295*x
+            y0 = 37.813187
+
+            return (y0 + location[1]*y, x0 + location[0]*x)
+
         time_field = 0
+        file_count = 0
+        file_name = "%s.txt"%file_count
+        message_count = 0
+        out_file = open(file_name, 'w')
+        s3 = boto3.resource('s3')
         while True:
             time_field += 1
             my_map.reset_exit_cars()
-            for car_id in xrange(number_of_cars):
-                #lat, lon = location_convertor(my_cars[j].current_location)
-
-##                # convert the indices, 10 x 10 grid for now
-##                grid_id = str(10*(my_cars[car_id].current_location[0]/90) +\
-##                          my_cars[car_id].current_location[1]/90)
-                grid_id = str(50*(my_cars[car_id].current_location[0])/18 +\
-                          my_cars[car_id].current_location[1]/18)
+            for idx in xrange(number_of_cars):
+                lat, lon = location_convertor(my_cars[idx].current_location)
+                grid_id = str(50*(my_cars[idx].current_location[0])/18 +\
+                          my_cars[idx].current_location[1]/18)
+                car_id = my_cars[idx].car_id
                 
-                speed_field = my_cars[car_id].speed
+                speed_field = my_cars[idx].speed
                 str_fmt = "{};{};{};{}"
                 message_info = str_fmt.format(grid_id,
                                               car_id,
                                               time_field,
                                               speed_field)
                 #print message_info
+                out_file.write("%s,%s,%s,%s,%s\n"(lat,lon,car_id,time_field,speed_field))
+                message_count += 1
+                if message_count == 25000000:
+                    out_file = open(file_name, 'rb')
+                    s3.Bucket('gene-der-su-traffic-data').put_object(Key=file_name,
+                                                                     Body=out_file)
+                    os.remove(file_name)
+                    file_count += 1
+                    file_name = "%s.txt"%file_count
+                    out_file = open(file_name, 'w')
+                    message_count = 0
                 self.producer.send_messages('auto_log', grid_id, message_info)
                 
                 (new_location,
                  road_type,
-                 number_of_car) = my_map.move_location(my_cars[car_id].current_location,
-                                                       my_cars[car_id].pervious_location)                    
+                 number_of_car) = my_map.move_location(my_cars[idx].current_location,
+                                                       my_cars[idx].pervious_location)                    
                 if new_location[0] > 0 and new_location[0] < 899 and \
                    new_location[1] > 0 and new_location[1] < 899:
-                    if new_location == my_cars[car_id].current_location:
+                    if new_location == my_cars[idx].current_location:
                         new_speed = 0
                     else:
-                        new_speed = generate_new_speed(my_cars[car_id].speed,
+                        new_speed = generate_new_speed(my_cars[idx].speed,
                                                        road_type,
                                                        number_of_car)
-                    my_cars[car_id].move(new_speed, new_location)
+                    my_cars[idx].move(new_speed, new_location)
                 else:
-                    my_cars[car_id] = Car(random.randint(1,100), my_map.random_location())
+                    my_cars[idx] = Car(max_car_id, random.randint(1,100), my_map.random_location())
+                    max_car_id += 1
 
 
 if __name__ == "__main__":
