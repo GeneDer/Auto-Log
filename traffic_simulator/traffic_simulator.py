@@ -86,9 +86,9 @@ class Producer(object):
                                               time_field,
                                               speed_field)
                 #print message_info
-                out_file.write("%s,%s,%s,%s,%s\n"(lat,lon,car_id,time_field,speed_field))
+                out_file.write("%s,%s,%s,%s,%s\n"%(lat,lon,car_id,time_field,speed_field))
                 message_count += 1
-                if message_count == 25000000:
+                if message_count == 2000000:
                     out_file = open(file_name, 'rb')
                     s3.Bucket('gene-der-su-traffic-data').put_object(Key=file_name,
                                                                      Body=out_file)
