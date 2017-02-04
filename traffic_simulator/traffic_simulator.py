@@ -1,10 +1,10 @@
 """
-This script is used to mock the traffic data in scaled down version of
+This script is used to mock the traffic data in a scaled down version of
 San Francisco. The road map is taken from Google Maps. Each car will
 randomly occupy a space on the road and each road space has a capacity
 of cars that can be traveling. Each car will be traveling for a certain
-distance. Once the full distance is traveled, it will be removed and restart
-with a new location. 
+distance. Once the full distance is traveled, it will be removed and new
+car will respawn in a new location. 
 """
 
 import random
@@ -21,6 +21,7 @@ from kafka.producer import KeyedProducer
 class Producer(object):
 
     def __init__(self, addr):
+        # setup connection to the kafka in order to send messages
         self.client = SimpleClient(addr)
         self.producer = KeyedProducer(self.client)
 
@@ -29,12 +30,14 @@ class Producer(object):
         my_map = SFMap()
 
         # generate cars according to the number_of_cars
+        # each car is traveled for random distance from 1 to 100
         my_cars = []
         max_car_id = number_of_cars
         for i in xrange(number_of_cars):
             my_cars.append(Car(i, random.randint(1,100), my_map.random_location()))
 
-        # generate new speed
+        # generate new speed according to the current speed and
+        # the road capacity
         def generate_new_speed(current_speed, road_type, number_of_car):
             speed_offset = abs(np.random.normal(0,5))
             if number_of_car*2 > road_type*5:
@@ -53,7 +56,7 @@ class Producer(object):
                     current_speed = 40
             return current_speed
 
-        # convert the pixel into lat and long
+        # convert the indices into lat and long
         def location_convertor(location):
             x = (122.470891 - 122.391583)/(800 - 338)
             y = -(37.813187 - 37.690489)/(900)
@@ -62,12 +65,13 @@ class Producer(object):
 
             return (y0 + location[1]*y, x0 + location[0]*x)
 
+        # while loop to iterate the simulator continuously 
         time_field = 0
         while True:
             time_field += 1
             my_map.reset_exit_cars()
             for idx in xrange(number_of_cars):
-                lat, lon = location_convertor(my_cars[idx].current_location)
+                #lat, lon = location_convertor(my_cars[idx].current_location)
                 grid_id = str(50*(my_cars[idx].current_location[0])/18 +\
                           my_cars[idx].current_location[1]/18)
                 car_id = my_cars[idx].car_id

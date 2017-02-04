@@ -6,6 +6,13 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 def query_all_data():
+    """
+    Helper function to get all data from redis database.
+    The ip and the password is loaded from the key.txt.
+    The function returns the data as dictionary with
+    grid id as key and dictionary of average speed and
+    volume as the value and an integer of max_volume.
+    """
     with open("/home/ubuntu/Auto-Log/flaskapp/key.txt", 'r') as key_file:
         ip = key_file.readline().strip()
         password = key_file.readline().strip()
@@ -25,7 +32,7 @@ def query_all_data():
     return data, max_volume
 
 
-# convert the pixel into lat and long
+# convert the pixel index into lat and long
 def location_convertor(location):
     x = (122.470891 - 122.391583)/(800 - 338)
     y = -(37.813187 - 37.690489)/(900)
@@ -34,7 +41,15 @@ def location_convertor(location):
 
     return (y0 + location[1]*y, x0 + location[0]*x)
 
+
 def get_colors(current_vol, max_vol):
+    """
+    The color is calculated directly to the
+    proportion of max_val. A proportion of 0
+    will return blue color code and a proportion
+    of 1 will return red color code. Everything
+    in between will be linearly scaled.
+    """
     color_level = 255*current_vol/max_vol
     red = hex(color_level)[2:]
     if len(red) == 1:
@@ -45,18 +60,27 @@ def get_colors(current_vol, max_vol):
     color = "#%s00%s"%(red, blue)
     return color
 
+
+# route to show the map
 @app.route('/')
 def index():
     data, max_volume = query_all_data()
-    
+
     grids = []                 
     for i in xrange(0,901,18):
         for j in xrange(0,901,18):
             grid_id = str(50*(i/18) + j/18)
+
+            # calculate the lat and long of each
+            # corner of the grid
             lat1, lon1 = location_convertor((i,j))
             lat2, lon2 = location_convertor((i,j + 18))
             lat3, lon3 = location_convertor((i + 18,j + 18))
             lat4, lon4 = location_convertor((i + 18,j))
+
+            # if there are cars in the grid, show the average
+            # speed and volume. If not, just show NA for average
+            # speed and 0 for valume.
             if grid_id in data:
                 speed = "average speed: %s"%data[grid_id]["average speed"]
                 volume = "traffic volume: %s"%data[grid_id]["volume"]
@@ -74,6 +98,7 @@ def index():
     return render_template("index.html", grids=grids)
 
 
+# route for the api of grid and values
 @app.route('/api')
 def api():
     data, volume = query_all_data()
