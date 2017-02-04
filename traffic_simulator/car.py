@@ -11,6 +11,12 @@ class Car:
         self.current_location = current_location
 
     def move(self, new_speed, new_location):
+        """
+        Function that helps a car to move to a new place.
+        It checks whether the new location is different
+        from the current location. If it is, the
+        distance to end is reduced.
+        """
         self.speed = new_speed
         if self.current_location != new_location:
             self.distance_to_end -= 1

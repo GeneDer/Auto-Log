@@ -4,8 +4,16 @@ Road model for the San Francisco roads
 from PIL import Image
 import random
 
+
 class Road:
     def __init__(self, road_type):
+        """
+        Each road object is one pixel, they can be
+        one of the 4 types:
+        none road, small road, big road, and free way
+        Each of them also counts their current capacity
+        and number of cars exited in this iteration.
+        """
         self.road_type = road_type
         self.cars = 0
         self.exit_cars = 0
@@ -13,6 +21,12 @@ class Road:
 
 class SFMap:
     def __init__(self):
+        """
+        SFMap is an object that represents the roads in
+        San Francisco. It iterates throguh each pixel and
+        determines the road type. The corresponding road
+        is then created.
+        """
         sf_map = Image.open('sf_map.png')
         sf_map = sf_map.convert('RGB') # conversion to RGB
         sf_map_pixel = sf_map.load()
@@ -29,6 +43,8 @@ class SFMap:
         data2 = road2.load()
         data3 = road3.load()
 
+        # map_pixels is the 2d list that contained each road object
+        # road_list is easy lookup for the a driveable road
         self.map_pixels = []
         self.road_list = []
         for i in xrange(sf_map.size[0]):
@@ -51,6 +67,11 @@ class SFMap:
 
 
     def random_location(self):
+        """
+        This function helps to generate a random location
+        for a new car to spawn. It randomly pick a driveable
+        location, increments the capacity, and returns the location.
+        """
         idx = random.randint(0, len(self.road_list) - 1)
         loc = self.road_list[idx]
         self.map_pixels[loc[0]][loc[1]].cars += 1
@@ -58,6 +79,12 @@ class SFMap:
 
 
     def check_location(self, loc):
+        """
+        This function is used by move_location for checking
+        if there are extra capacity on a given location to host
+        another car. The maximum capacity is calculated as five
+        times of road_type.
+        """
         if self.map_pixels[loc[0]][loc[1]].cars < \
            self.map_pixels[loc[0]][loc[1]].road_type*5 and \
            self.map_pixels[loc[0]][loc[1]].exit_cars <= \
@@ -68,19 +95,28 @@ class SFMap:
 
     
     def move_location(self, current_location, pervious_location):
+        """
+        This function takes the current_location and check all 
+        nine neighboring location for a car move location. The
+        can not travel back. The new location is randomly picked
+        within the possible locations. If no possible location,
+        the car will stay in place.
+        """
         possible_location = []
         locations_to_check = [(-1, -1), (0, -1), (1, -1),
                               (-1, 0), (1, 0),
                               (-1, 1), (0, 1), (1, 1)]
         for location_offset in locations_to_check:
             tmp_location = (current_location[0] + location_offset[0],
-                               current_location[1] + location_offset[1])
+                            current_location[1] + location_offset[1])
             if self.check_location(tmp_location) and \
                tmp_location != pervious_location:
                 possible_location.append(tmp_location)
                 
         if len(possible_location) == 0:
-            return (current_location, 0, 0)
+            return (current_location,
+                    self.map_pixels[current_location[0]][current_location[1]].road_type,
+                    self.map_pixels[current_location[0]][current_location[1]].cars)
         else:
             new_location = random.choice(possible_location)
             self.map_pixels[new_location[0]][new_location[1]].cars += 1
@@ -92,9 +128,13 @@ class SFMap:
         
             
     def reset_exit_cars(self):
-        for i in xrange(len(self.map_pixels)):
-            for j in xrange(len(self.map_pixels[0])):
-                self.map_pixels[i][j].exit_cars = 0
+        """
+        After each iteration, the exit cars on each road block
+        need to be reset to 0. This method is used to reset
+        exit_cars in all driveable roads.
+        """
+        for road in self.road_list:
+            self.map_pixels[road[0]][road[1]].exit_cars = 0
                 
     
         
