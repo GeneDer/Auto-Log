@@ -77,7 +77,7 @@ class Producer(object):
                 car_id = my_cars[idx].car_id
                 
                 speed_field = my_cars[idx].speed
-                str_fmt = "{}:{};{};{};{}"
+                str_fmt = "{};{};{};{};{}"
                 message_info = str_fmt.format(lat,
                                               lon,
                                               car_id,
