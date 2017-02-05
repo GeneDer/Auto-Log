@@ -71,14 +71,15 @@ class Producer(object):
             time_field += 1
             my_map.reset_exit_cars()
             for idx in xrange(number_of_cars):
-                #lat, lon = location_convertor(my_cars[idx].current_location)
+                lat, lon = location_convertor(my_cars[idx].current_location)
                 grid_id = str(50*(my_cars[idx].current_location[0])/18 +\
                           my_cars[idx].current_location[1]/18)
                 car_id = my_cars[idx].car_id
                 
                 speed_field = my_cars[idx].speed
-                str_fmt = "{};{};{};{}"
-                message_info = str_fmt.format(grid_id,
+                str_fmt = "{}:{};{};{};{}"
+                message_info = str_fmt.format(lat,
+                                              lon,
                                               car_id,
                                               time_field,
                                               speed_field)

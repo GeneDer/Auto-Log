@@ -33,10 +33,10 @@ object TrafficDataStreaming {
         val lines = rdd.map(_._2)
         val ticksDF = lines.map( x => {
 				       val tokens = x.split(";")
-                                       Tick(tokens(0), tokens(3).toDouble, 1)
+                       Tick(((50*(tokens(1).toDouble + 122.528741387)/0.00017166233 + (tokens(0).toDouble - 37.813187)/-0.00013633111)/18).toString, tokens(4).toDouble, tokens(4).toString)
 				      }).toDF()
         val ticks_per_source_DF = ticksDF.groupBy("grid_id")
-                                .agg("speed" -> "avg", "volume" -> "sum")
+                                .agg("speed" -> "avg", countDistinct('car_id'))
                                 .orderBy("grid_id")
 	
 	val r = new RedisClient("52.34.86.155", 6379, secret=Option("this is not real password XP"))
@@ -54,7 +54,7 @@ object TrafficDataStreaming {
   }
 }
 
-case class Tick(grid_id: String, speed: Double, volume: Int)
+case class Tick(grid_id: String, speed: Double, car_id: String)
 
 /** Lazily instantiated singleton instance of SQLContext */
 object SQLContextSingleton {
