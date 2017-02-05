@@ -6,6 +6,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkContext
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions._
 import com.redis.RedisClient
 
 object TrafficDataStreaming {
@@ -33,13 +34,12 @@ object TrafficDataStreaming {
         val lines = rdd.map(_._2)
         val ticksDF = lines.map( x => {
 				       val tokens = x.split(";")
-                       Tick(((50*(tokens(0).toDouble - 37.813187)/-0.00013633111 + (tokens(1).toDouble + 122.528741387)/0.00017166233)/18).toString, tokens(4).toDouble, tokens(4).toString)
+                       Tick(((50*((37.813187 - tokens(0).toDouble)/0.00013633111).toInt + ((tokens(1).toDouble + 122.528741387)/0.00017166233).toInt)/18).toString, tokens(4).toDouble, tokens(4).toString)
 				      }).toDF()
         val ticks_per_source_DF = ticksDF.groupBy("grid_id")
-                                .agg("speed" -> "avg", countDistinct('car_id'))
-                                .orderBy("grid_id")
+                                .agg(avg("speed"), approxCountDistinct("car_id"))
 	
-	val r = new RedisClient("52.34.86.155", 6379, secret=Option("this is not real password XP"))
+	val r = new RedisClient("52.34.86.155", 6379, secret=Option("PUT YOUR PASSWORD HERE"))
 	ticks_per_source_DF.collect().foreach(t => {
 			r.set(t(0),t(1).toString()+";"+t(2).toString())
 		}
