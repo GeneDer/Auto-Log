@@ -33,7 +33,7 @@ object TrafficDataStreaming {
         val lines = rdd.map(_._2)
         val ticksDF = lines.map( x => {
 				       val tokens = x.split(";")
-                       Tick(((50*(tokens(1).toDouble + 122.528741387)/0.00017166233 + (tokens(0).toDouble - 37.813187)/-0.00013633111)/18).toString, tokens(4).toDouble, tokens(4).toString)
+                       Tick(((50*(tokens(0).toDouble - 37.813187)/-0.00013633111 + (tokens(1).toDouble + 122.528741387)/0.00017166233)/18).toString, tokens(4).toDouble, tokens(4).toString)
 				      }).toDF()
         val ticks_per_source_DF = ticksDF.groupBy("grid_id")
                                 .agg("speed" -> "avg", countDistinct('car_id'))

@@ -63,7 +63,7 @@ class Producer(object):
             x0 = -122.478101 - 295*x
             y0 = 37.813187
 
-            return (y0 + location[1]*y, x0 + location[0]*x)
+            return (y0 + location[0]*y, x0 + location[1]*x)
 
         # while loop to iterate the simulator continuously 
         time_field = 0
