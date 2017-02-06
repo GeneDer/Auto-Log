@@ -5,7 +5,7 @@ import numpy
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-def query_all_data():
+def query_all_data(grid_id=None):
     """
     Helper function to get all data from redis database.
     The ip and the password is loaded from the key.txt.
@@ -20,16 +20,18 @@ def query_all_data():
     r = redis.StrictRedis(host=ip,
                           port=6379,
                           password=password)
-    
-    data = {}
-    max_volume = 1
-    for key in r.scan_iter():
-        val = r.get(key).split(';')
-        data[key] = {"average speed": val[0],
-                     "volume": val[1]}
-        if int(val[1]) > max_volume:
-            max_volume = int(val[1])
-    return data, max_volume
+    if grid_id:
+        return r.get(grid_id).split(';')
+    else:
+        data = {}
+        max_volume = 1
+        for key in r.scan_iter():
+            val = r.get(key).split(';')
+            data[key] = {"average speed": val[0],
+                         "volume": val[1]}
+            if int(val[1]) > max_volume:
+                max_volume = int(val[1])
+        return data, max_volume
 
 
 # convert the pixel index into lat and long
@@ -99,10 +101,25 @@ def index():
 
 
 # route for the api of grid and values
-@app.route('/api')
-def api():
+@app.route('/api/alldata')
+def all_data_api():
     data, volume = query_all_data()
     return jsonify(data)
+
+
+# rount for the api of a specific grid 
+@app.route('/api/<float: lat>/<float: lon>')
+def grid_data_api(lat, lon):
+    grid_id = (50*((37.813187 - lat)/0.00013633111) + \
+              ((lon + 122.528741387)/0.00017166233))/18
+    data = query_all_data(grid_id=grid_id)
+    if data:
+        return jsonify({"average speed": data[0],
+                        "volume": data[1]})
+    else:
+        return jsonify({"average speed": 0,
+                        "volume": 0})
+
 
 if __name__ == '__main__':
     app.run()
