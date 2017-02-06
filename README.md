@@ -12,6 +12,7 @@ efficiency. Navigation softwares can incorporate these data and further imporve 
 experience. 
 
 ## Data Pipeline
+![Alt text](pipeline.png?raw=true "Optional Title")
 
 ## Product Screenshot
 ![Alt text](product_screenshot.png?raw=true "Optional Title")
