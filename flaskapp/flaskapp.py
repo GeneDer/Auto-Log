@@ -52,14 +52,15 @@ def get_colors(current_vol, max_vol):
     of 1 will return red color code. Everything
     in between will be linearly scaled.
     """
-    color_level = 255*current_vol/max_vol
-    red = hex(color_level)[2:]
-    if len(red) == 1:
-        red = '0' + red
-    blue = hex(255 - color_level)[2:]
-    if len(blue) == 1:
-        blue = '0' + blue
-    color = "#%s00%s"%(red, blue)
+    color_level = 356*current_vol/max_vol
+    if color_level < 179:
+        red = "f4"
+        blue = hex(66 + color_level)
+    else:
+        blue = "f4"
+        red = hex(422 - color_level)
+    
+    color = "#%s66%s"%(red, blue)
     return color
 
 
