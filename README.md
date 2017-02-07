@@ -27,6 +27,7 @@ Hadoop and Spark for `gene-su-spark`.
     ~~~
     /usr/local/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic auto_log --partitions 4 --replication-factor 2
     ~~~
+
 ### Simulator Setup
 1. Create a new AWS EC2 for traffic simulation (or simulate on local machine).
 2. Install the required libraries on the new EC2 instance (follow for Ubuntu 14.04).
@@ -60,6 +61,7 @@ in master node of `gene-su-kafka`.
     ~~~
     /usr/local/kafka/bin/kafka-simple-consumer-shell.sh --broker-list localhost:9092 --topic auto_log --partition 0
     ~~~
+
 ### Redis and Spark Setup
 1. Follow [this guide](https://github.com/InsightDataScience/data-engineering-ecosystem/wiki/Redis)
 to install Redis on the master node of `gene-su-spark`. Make the following change to
@@ -85,6 +87,7 @@ the `redis.conf` file before start, so it can be accessed from outside.
     e.g.
     spark-submit --class TrafficDataStreaming --master spark://ip-172-31-0-69:7077 --jars target/scala-2.11/traffic_data-assembly-1.0.jar target/scala-2.11/traffic_data-assembly-1.0.jar
     ~~~
+    
 ### Flask Setup (was modified from this [guide](http://www.datasciencebytes.com/bytes/2015/02/24/running-a-flask-app-on-aws-ec2/))
 1. In master node of `gene-su-spark`, replace the `key.txt` file under 
 `flaskapp` with your redis ip and password.
