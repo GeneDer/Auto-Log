@@ -55,7 +55,29 @@ object TrafficDataStreaming {
                         }).toDF()
         val ticks2_per_source_DF = ticks2DF.groupBy("lat_long_and_time")
                                     .agg(collect_set("car_id"))
-                                    .orderBy("car_id")
+        val r2 = new RedisClient("52.34.86.155", 6379, database=1, secret=Option("PUT YOUR PASSWORD HERE"))
+        r2.flushdb
+        ticks2_per_source_DF.collect().foreach(t => {
+
+                // can't get the processing works in spark
+                // directly store the set and try processing in flask
+                // also help to reduce run time
+                r2.set(t(1), 0)
+
+                //if( t(1).size > 1 ){
+                //    for (i <- 0 until (t(1).size - 1)) {
+                //        for (j <- (i + 1) until t(1).size) {
+                //            if( t(1)(i).toInt < t(1)(j).toInt ){
+                //                r2.set(t(1)(i) + "," + t(1)(j), "0")
+                //            } else{
+                //                r2.set(t(1)(j) + "," + t(1)(i), "0")
+                //            }
+                //        }
+                //    }
+                //}
+            }
+
+        )
         ticks2_per_source_DF.show()
 
 
