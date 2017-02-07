@@ -1,6 +1,8 @@
 from flask import Flask, request, g, render_template, redirect, url_for, jsonify, abort
 import redis
 import numpy
+import json
+import os
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -64,6 +66,64 @@ def get_colors(current_vol, max_vol):
     return color
 
 
+def generate_graph():
+    """
+    This function help to generate the json file for graph.
+    It first reads all the entries from database 1 and filter
+    out all records with no connections. Then it will add the
+    edges to the set until the size reach 5000 (over 5000 edges
+    will make the graph very massy). Finally it will use those
+    information to generation an dictionary and dump it as "data.json".
+    """
+    with open("/home/ubuntu/Auto-Log/flaskapp/key.txt", 'r') as key_file:
+        ip = key_file.readline().strip()
+        password = key_file.readline().strip()
+    
+    r = redis.StrictRedis(host=ip,
+                          port=6379,
+                          password=password,
+                          db = 1))
+    
+    max_edges = 5000
+    node_group = []
+    node_group_len = []
+    for k in r.keys():
+        nodes = map(int, k[13:-1].split(', '))
+        if len(nodes) > 1:
+            node_group.append(nodes)
+            node_group_len.append(len(nodes))
+
+    nodes = set([])
+    links = set([])
+    node_group_len = numpy.array(node_group_len)
+    for i in numpy.argsort(node_group_len)[::-1]:
+        current_node = node_group[i]
+        for j in xrange(len(current_node) - 1):
+            for k in xrange(j, len(current_node)):
+                nodes.add(current_node[j])
+                nodes.add(current_node[k])
+                if current_node[j] < current_node[k]:
+                    links.add((current_node[j], current_node[k]))
+                elif current_node[j] > current_node[k]:
+                    links.add((current_node[k], current_node[j]))
+        if len(links) > max_edges:
+            break
+
+    data_json = {"nodes":[], "links": []}
+    for i in nodes:
+        data_json["nodes"].append({"id": i, "group": 1})
+    for i in links:
+        data_json["links"].append({"source": i[0],
+                                   "target": i[1],
+                                   "value": 1})
+
+    os.remove('static/data.json')
+    with open('static/data.json', 'w') as outfile:
+        json.dump(data_json, outfile)
+
+    print len(data_json["nodes"]),len(data_json["links"])
+
+
 # route to show the map
 @app.route('/')
 def index():
@@ -108,9 +168,12 @@ def all_data_api():
     return jsonify(data)
 
 
-# rount for the api of a specific grid 
-@app.route('/api/<float: lat>/<float: lon>')
-def grid_data_api(lat, lon):
+# route for the api of a specific grid 
+@app.route('/api/query')
+def grid_data_api():
+    lat = float(request.args.get('lat'))
+    lon = float(request.args.get('long'))
+    print lat, lon, type(lat), type(lon)
     grid_id = (50*((37.813187 - lat)/0.00013633111) + \
               ((lon + 122.528741387)/0.00017166233))/18
     data = query_all_data(grid_id=grid_id)
@@ -121,6 +184,12 @@ def grid_data_api(lat, lon):
         return jsonify({"average speed": 0,
                         "volume": 0})
 
+
+# route for display graph 
+@app.route('/graph')
+def graph():
+    generate_graph()
+    return render_template("graph.html")
 
 if __name__ == '__main__':
     app.run()

@@ -18,12 +18,12 @@ object TrafficDataStreaming {
 
     // Create context with 2 second batch interval
     val sparkConf = new SparkConf().setAppName("traffic_data")
-    val ssc = new StreamingContext(sparkConf, Seconds(10))
+    val ssc = new StreamingContext(sparkConf, Seconds(20))
 
     // Create direct kafka stream with brokers and topics
     val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
     val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, topicsSet)
-    val windowStream = messages.window(Seconds(300), Seconds(10))
+    val windowStream = messages.window(Seconds(20), Seconds(20))
 
     // Get the lines and show results
     windowStream.foreachRDD { rdd =>
