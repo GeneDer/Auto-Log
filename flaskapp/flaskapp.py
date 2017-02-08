@@ -117,7 +117,6 @@ def generate_graph():
                                    "target": i[1],
                                    "value": 1})
 
-    os.remove('/home/ubuntu/Auto-Log/flaskapp/static/data.json')
     with open('/home/ubuntu/Auto-Log/flaskapp/static/data.json', 'w') as outfile:
         json.dump(data_json, outfile)
 
