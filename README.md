@@ -12,16 +12,16 @@ efficiency. Navigation softwares can incorporate these data and further imporve 
 experience. 
 
 ## Data Pipeline
-![Alt text](readme_pictures/pipeline.png?raw=true "Optional Title")
+![Alt text](miscellaneous/pipeline.png?raw=true "Optional Title")
 
 ## Product
-![Alt text](readme_pictures/real_time_traffic.png?raw=true "Optional Title")
+![Alt text](miscellaneous/real_time_traffic.png?raw=true "Optional Title")
 - Live demo is at [http://autolog.online/](http://autolog.online/)
 - Query traffic data for a specific location with 
 [http://autolog.online/api/query?lat=37.765217&long=-122.438982](http://autolog.online/api/query?lat=37.765217&long=-122.438982)
 - Query all data with [http://autolog.online/api/alldata](http://autolog.online/api/alldata)
 - Plot car connections wtih [http://autolog.online/graph](http://autolog.online/graph)
-![Alt text](readme_pictures/car_connection_graph.png?raw=true "Optional Title")
+![Alt text](miscellaneous/car_connection_graph.png?raw=true "Optional Title")
 
 
 ## Project Setups
