@@ -23,7 +23,7 @@ def query_all_data(grid_id=None):
                           port=6379,
                           password=password)
     if grid_id:
-        return r.get(grid_id).split(';')
+        return r.get(grid_id)
     else:
         data = {}
         max_volume = 1
@@ -82,7 +82,7 @@ def generate_graph():
     r = redis.StrictRedis(host=ip,
                           port=6379,
                           password=password,
-                          db = 1))
+                          db = 1)
     
     max_edges = 5000
     node_group = []
@@ -117,8 +117,8 @@ def generate_graph():
                                    "target": i[1],
                                    "value": 1})
 
-    os.remove('static/data.json')
-    with open('static/data.json', 'w') as outfile:
+    os.remove('/home/ubuntu/Auto-Log/flaskapp/static/data.json')
+    with open('/home/ubuntu/Auto-Log/flaskapp/static/data.json', 'w') as outfile:
         json.dump(data_json, outfile)
 
     print len(data_json["nodes"]),len(data_json["links"])
@@ -174,10 +174,11 @@ def grid_data_api():
     lat = float(request.args.get('lat'))
     lon = float(request.args.get('long'))
     print lat, lon, type(lat), type(lon)
-    grid_id = (50*((37.813187 - lat)/0.00013633111) + \
-              ((lon + 122.528741387)/0.00017166233))/18
+    grid_id = (50*int((37.813187 - lat)/0.00013633111) + \
+              int((lon + 122.528741387)/0.00017166233))/18
     data = query_all_data(grid_id=grid_id)
     if data:
+        data = data.split(';')
         return jsonify({"average speed": data[0],
                         "volume": data[1]})
     else:
