@@ -12,10 +12,17 @@ efficiency. Navigation softwares can incorporate these data and further imporve 
 experience. 
 
 ## Data Pipeline
-![Alt text](pipeline.png?raw=true "Optional Title")
+![Alt text](readme_pictures/pipeline.png?raw=true "Optional Title")
 
 ## Product Screenshot
-![Alt text](product_screenshot.png?raw=true "Optional Title")
+![Alt text](readme_pictures/real_time_traffic.png?raw=true "Optional Title")
+- Live demo is at [here](http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/)
+- Query traffic data for a specific location with 
+[http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/api/query?lat=37.765217&long=-122.438982](http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/api/query?lat=37.765217&long=-122.438982)
+- Query all data with [http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/api/alldata](http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/api/alldata)
+- Plot car connections wtih [http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/graph](http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/graph)
+![Alt text](readme_pictures/car_connection_graph.png?raw=true "Optional Title")
+
 
 ## Project Setups
 ### Clusters Setup
@@ -88,7 +95,7 @@ the `redis.conf` file before start, so it can be accessed from outside.
     ~~~
 
 3. Change the DNS of Kafka server and ip and password of Redis server in 
-`Auto-Log/spark_streaming/src/main/scala/traffic_data.scala` on line 14 and 42.
+`Auto-Log/spark_streaming/src/main/scala/traffic_data.scala` on line 15, 42, and 58.
 4. Compile and start spark job.
 
     ~~~
@@ -145,4 +152,7 @@ the `redis.conf` file before start, so it can be accessed from outside.
 
 6. Now you can check the traffic density and average speed of simulated 
 San Francisco traffics with the IP of the master node of `gene-su-spark`.
-As a note to myself, the apache error log can be found `/var/log/apache2/error.log`. 
+As a note to myself, the apache error log can be found 
+    ~~~
+    nano /var/log/apache2/error.log
+    ~~~
