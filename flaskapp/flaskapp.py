@@ -56,11 +56,11 @@ def get_colors(current_vol, max_vol):
     """
     color_level = 356*current_vol/max_vol
     if color_level < 179:
-        red = "f4"
-        blue = hex(66 + color_level)
-    else:
         blue = "f4"
-        red = hex(422 - color_level)
+        red = hex(66 + color_level)[-2:]
+    else:
+        red = "f4"
+        blue = hex(422 - color_level)[-2:]
     
     color = "#%s66%s"%(red, blue)
     return color
