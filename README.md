@@ -14,7 +14,7 @@ experience.
 ## Data Pipeline
 ![Alt text](readme_pictures/pipeline.png?raw=true "Optional Title")
 
-## Product Screenshot
+## Product
 ![Alt text](readme_pictures/real_time_traffic.png?raw=true "Optional Title")
 - Live demo is at [here](http://ec2-52-34-86-155.us-west-2.compute.amazonaws.com/)
 - Query traffic data for a specific location with 
