@@ -63,7 +63,7 @@ class Producer(object):
             x0 = -122.478101 - 295*x
             y0 = 37.813187
 
-            return (y0 + location[0]*y, x0 + location[1]*x)
+            return (y0 + location[1]*y, x0 + location[0]*x)
 
         # while loop to iterate the simulator continuously 
         time_field = 0
@@ -72,8 +72,8 @@ class Producer(object):
             my_map.reset_exit_cars()
             for idx in xrange(number_of_cars):
                 lat, lon = location_convertor(my_cars[idx].current_location)
-                grid_id = str(50*(my_cars[idx].current_location[0])/18 +\
-                          my_cars[idx].current_location[1]/18)
+                grid_id = str(50*(my_cars[idx].current_location[1])/18 +\
+                          my_cars[idx].current_location[0]/18)
                 car_id = my_cars[idx].car_id
                 
                 speed_field = my_cars[idx].speed
