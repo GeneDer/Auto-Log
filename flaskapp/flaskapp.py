@@ -173,8 +173,8 @@ def grid_data_api():
     lat = float(request.args.get('lat'))
     lon = float(request.args.get('long'))
     print lat, lon, type(lat), type(lon)
-    grid_id = (50*int((37.813187 - lat)/0.00013633111) + \
-              int((lon + 122.528741387)/0.00017166233))/18
+    grid_id = 50*(int(round((37.813187 - lat)/0.00013633111))/18) + \
+              int(round((lon + 122.528741387)/0.00017166233))/18
     data = query_all_data(grid_id=grid_id)
     if data:
         data = data.split(';')
