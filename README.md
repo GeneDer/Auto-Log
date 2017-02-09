@@ -150,7 +150,13 @@ the `redis.conf` file before start, so it can be accessed from outside.
     sudo apachectl restart
     ~~~
 
-6. Now you can check the traffic density and average speed of simulated 
+6. Change the file owner of `data.json` so that flask can rewrite new data.
+
+    ~~~
+    sudo chown www-data:www-data Auto-Log/flaskapp/static/data.json
+    ~~~
+
+7. Now you can check the traffic density and average speed of simulated 
 San Francisco traffics with the IP of the master node of `gene-su-spark`.
 As a note to myself, the apache error log can be found 
     ~~~
