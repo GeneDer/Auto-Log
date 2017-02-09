@@ -25,7 +25,7 @@ class Producer(object):
         self.client = SimpleClient(addr)
         self.producer = KeyedProducer(self.client)
 
-    def produce_msgs(self, number_of_cars):
+    def produce_msgs(self, number_of_cars, session_id):
         # load SFMap test
         my_map = SFMap()
 
@@ -34,7 +34,8 @@ class Producer(object):
         my_cars = []
         max_car_id = number_of_cars
         for i in xrange(number_of_cars):
-            my_cars.append(Car(i, random.randint(1,100), my_map.random_location()))
+            car_id = i + number_of_cars*(session_id - 1)
+            my_cars.append(Car(car_id, random.randint(1,100), my_map.random_location()))
 
         # generate new speed according to the current speed and
         # the road capacity
@@ -68,6 +69,11 @@ class Producer(object):
 
             return lat, lon
 
+        # generate new car with given id
+        def respawn_new_car(car_id):
+            new_car = Car(car_id, random.randint(1,100), my_map.random_location())
+            return new_car
+            
         # while loop to iterate the simulator continuously 
         time_field = 0
         while True:
@@ -102,14 +108,17 @@ class Producer(object):
                                                        road_type,
                                                        number_of_car)
                     my_cars[idx].move(new_speed, new_location)
+                    if my_cars[idx].distance_to_end == 0:
+                        my_cars[idx] = respawn_new_car(my_cars[idx].car_id)
+
                 else:
-                    my_cars[idx] = Car(max_car_id, random.randint(1,100), my_map.random_location())
-                    max_car_id += 1
+                    my_cars[idx] = respawn_new_car(my_cars[idx].car_id)
 
 
 if __name__ == "__main__":
     args = sys.argv
-    ip_addr = str(args[1])
-    number_of_cars = int(args[2])
+    session_id = int(args[1])
+    ip_addr = str(args[2])
+    number_of_cars = int(args[3])
     prod = Producer(ip_addr)
-    prod.produce_msgs(number_of_cars)
+    prod.produce_msgs(number_of_cars, session_id)

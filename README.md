@@ -65,9 +65,9 @@ Hadoop and Spark for `gene-su-spark`.
    
     ~~~
     cd Auto-Log/traffic_simulator
-    bash spawn_kafka_streams.sh <ip address> <session name> <number of car simulated>
+    bash spawn_kafka_streams.sh <ip address> <number of session> <session name> <number of car simulated>
 
-    e.g. bash spawn_kafka_streams.sh 35.167.53.204 k1 100000
+    e.g. bash spawn_kafka_streams.sh 35.167.53.204 10 k1 100000
     ~~~
 
 5. You can check the message produced by the simulator with the following commend 
