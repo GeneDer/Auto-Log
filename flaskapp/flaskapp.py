@@ -131,7 +131,7 @@ def index():
     grids = []                 
     for i in xrange(0,901,18):
         for j in xrange(0,901,18):
-            grid_id = str(50*(i/18) + j/18)
+            grid_id = str(50*(j/18) + i/18)
 
             # calculate the lat and long of each
             # corner of the grid
