@@ -97,13 +97,8 @@ class Producer(object):
                 self.producer.send_messages('auto_log', grid_id, message_info)
                 
                 new_location = (random.randint(0,18), random.randint(0,18))
+                new_speed = 0
                 
-                if new_location == my_cars[idx].current_location:
-                    new_speed = 0
-                else:
-                    new_speed = generate_new_speed(my_cars[idx].speed,
-                                                   road_type,
-                                                   number_of_car)
                 my_cars[idx].move(new_speed, new_location)
                 if my_cars[idx].distance_to_end == 0:
                     my_cars[idx] = respawn_new_car(my_cars[idx].car_id)
