@@ -30,6 +30,6 @@ for i in xrange(900):
             x.append(lon)
 
 plt.plot(x,y,'.')
-plt.plot(x2,y2,'.')
+#plt.plot(x2,y2,'.')
 plt.show()
         
