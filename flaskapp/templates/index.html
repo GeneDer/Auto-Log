@@ -14,6 +14,8 @@
     
     <body>
         
+
+        
         <div id="mapid" style="width: 1200px; height: 700px;"></div>
         <script>
             
@@ -33,11 +35,12 @@
                            [{{ grid[4] }}, {{ grid[5] }}],
                            [{{ grid[6] }}, {{ grid[7] }}]])
                            .setStyle({fillColor: '{{grid[10]}}',
-                                     weight: '1'})
+                                     weight: '1', opacity: 0, fillOpacity: 0.6})
                            .addTo(mymap).bindPopup("{{grid[8]}} <br> {{grid[9]}}");
             {% endfor %}
             
             </script>
+            <script> setTimeout(function(){window.location.reload(1);}, 10000);</script>
     </body>
 </html>
 
