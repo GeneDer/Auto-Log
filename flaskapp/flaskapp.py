@@ -181,7 +181,7 @@ def query():
 @app.route('/api/query')
 def grid_data_api():
     lat = float(request.args.get('lat'))
-    lon = float(request.args.get('lon'))
+    lon = float(request.args.get('long'))
     print lat, lon, type(lat), type(lon)
     grid_id = 50*(int(round((37.813187 - lat)/0.00013633111))/18) + \
               int(round((lon + 122.528741387)/0.00017166233))/18
@@ -200,6 +200,11 @@ def grid_data_api():
 def graph():
     generate_graph()
     return render_template("graph.html")
+
+# route for about me page 
+@app.route('/about_me')
+def about_me():
+    return redirect("https://www.linkedin.com/in/genedersu")
 
 if __name__ == '__main__':
     app.run()
