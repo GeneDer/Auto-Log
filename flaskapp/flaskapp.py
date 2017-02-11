@@ -167,11 +167,21 @@ def all_data_api():
     return jsonify(data)
 
 
+# route for display form for query a location 
+@app.route('/query', methods=['GET', 'POST'])
+def query():
+    if request.method == 'POST':
+        lat = request.form['lat']
+        lon = request.form['lon']
+        return redirect('http://autolog.online/api/query?lat=%s&long=%s'%(lat, lon))
+    else:
+        return render_template("query.html")
+
 # route for the api of a specific grid 
 @app.route('/api/query')
 def grid_data_api():
     lat = float(request.args.get('lat'))
-    lon = float(request.args.get('long'))
+    lon = float(request.args.get('lon'))
     print lat, lon, type(lat), type(lon)
     grid_id = 50*(int(round((37.813187 - lat)/0.00013633111))/18) + \
               int(round((lon + 122.528741387)/0.00017166233))/18
