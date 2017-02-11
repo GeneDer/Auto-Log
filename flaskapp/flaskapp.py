@@ -129,8 +129,8 @@ def index():
     data, max_volume = query_all_data()
 
     grids = []                 
-    for i in xrange(0,901,18):
-        for j in xrange(0,901,18):
+    for i in xrange(0,900,18):
+        for j in xrange(0,900,18):
             grid_id = str(50*(j/18) + i/18)
 
             # calculate the lat and long of each
