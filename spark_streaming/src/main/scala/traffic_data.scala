@@ -59,22 +59,9 @@ object TrafficDataStreaming {
         r2.flushdb
         ticks2_per_source_DF.collect().foreach(t => {
 
-                // can't get the processing works in spark
-                // directly store the set and try processing in flask
-                // also help to reduce run time
+                // store the set and try processing in flask can help to reduce run time
                 r2.set(t(1), 0)
 
-                //if( t(1).size > 1 ){
-                //    for (i <- 0 until (t(1).size - 1)) {
-                //        for (j <- (i + 1) until t(1).size) {
-                //            if( t(1)(i).toInt < t(1)(j).toInt ){
-                //                r2.set(t(1)(i) + "," + t(1)(j), "0")
-                //            } else{
-                //                r2.set(t(1)(j) + "," + t(1)(i), "0")
-                //            }
-                //        }
-                //    }
-                //}
             }
 
         )
