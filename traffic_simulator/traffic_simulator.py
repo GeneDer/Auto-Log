@@ -54,7 +54,7 @@ class Producer(object):
                     if current_speed > 50:
                         current_speed = 50
                 elif current_speed > 70:
-                    current_speed = 40
+                    current_speed = 70
             return current_speed
 
         # convert the indices into lat and long
@@ -100,7 +100,8 @@ class Producer(object):
                  number_of_car) = my_map.move_location(my_cars[idx].current_location,
                                                        my_cars[idx].pervious_location)                    
                 if new_location[0] > 0 and new_location[0] < 899 and \
-                   new_location[1] > 0 and new_location[1] < 899:
+                   new_location[1] > 0 and new_location[1] < 899 and \
+                   my_cars[idx].distance_to_end != 0:
                     if new_location == my_cars[idx].current_location:
                         new_speed = 0
                     else:
@@ -108,9 +109,6 @@ class Producer(object):
                                                        road_type,
                                                        number_of_car)
                     my_cars[idx].move(new_speed, new_location)
-                    if my_cars[idx].distance_to_end == 0:
-                        my_cars[idx] = respawn_new_car(my_cars[idx].car_id)
-
                 else:
                     my_cars[idx] = respawn_new_car(my_cars[idx].car_id)
 
