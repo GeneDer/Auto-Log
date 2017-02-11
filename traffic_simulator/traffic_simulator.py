@@ -70,7 +70,8 @@ class Producer(object):
             return lat, lon
 
         # generate new car with given id
-        def respawn_new_car(car_id):
+        def respawn_new_car(car_id, location):
+            my_map.remove_car(location)
             new_car = Car(car_id, random.randint(1,100), my_map.random_location())
             return new_car
             
@@ -110,7 +111,8 @@ class Producer(object):
                                                        number_of_car)
                     my_cars[idx].move(new_speed, new_location)
                 else:
-                    my_cars[idx] = respawn_new_car(my_cars[idx].car_id)
+                    my_cars[idx] = respawn_new_car(my_cars[idx].car_id,
+                                                   my_cars[idx].current_location)
 
 
 if __name__ == "__main__":

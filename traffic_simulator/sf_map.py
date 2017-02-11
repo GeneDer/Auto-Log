@@ -137,4 +137,11 @@ class SFMap:
             self.map_pixels[road[0]][road[1]].exit_cars = 0
                 
     
-        
+    def remove_car(self, location):
+        """
+        This function help to remove the car on a given road.
+        It is needed for the respawn new car to work. If the
+        old car is not being removed and new car keep spawn,
+        the simulator will only produce 0 speed everywhere.
+        """
+        self.map_pixels[location[0]][location[1]].cars -= 1
