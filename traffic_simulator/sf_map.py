@@ -78,17 +78,31 @@ class SFMap:
         return loc
 
 
-    def check_location(self, loc):
+    def check_location_cars(self, loc):
         """
         This function is used by move_location for checking
         if there are extra capacity on a given location to host
         another car. The maximum capacity is calculated as five
         times of road_type.
         """
-        if self.map_pixels[loc[0]][loc[1]].cars < \
-           self.map_pixels[loc[0]][loc[1]].road_type*5 and \
-           self.map_pixels[loc[0]][loc[1]].exit_cars <= \
-           self.map_pixels[loc[0]][loc[1]].road_type*2:
+        current_cars = self.map_pixels[loc[0]][loc[1]].cars
+        max_cars = self.map_pixels[loc[0]][loc[1]].road_type*5
+        if current_cars <= max_cars:
+            return True
+        else:
+            return False
+
+
+    def check_location_exit_cars(self, loc):
+        """
+        This function is used by move_location for checking
+        if there are extra capacity on a given location to exit
+        another car. The maximum capacity is calculated as two
+        times of road_type.
+        """
+        current_exit_cars = self.map_pixels[loc[0]][loc[1]].exit_cars
+        max_exit_cars = self.map_pixels[loc[0]][loc[1]].road_type*2
+        if current_exit_cars <= max_exit_cars:
             return True
         else:
             return False
@@ -102,29 +116,35 @@ class SFMap:
         within the possible locations. If no possible location,
         the car will stay in place.
         """
-        possible_location = []
-        locations_to_check = [(-1, -1), (0, -1), (1, -1),
-                              (-1, 0), (1, 0),
-                              (-1, 1), (0, 1), (1, 1)]
-        for location_offset in locations_to_check:
-            tmp_location = (current_location[0] + location_offset[0],
-                            current_location[1] + location_offset[1])
-            if self.check_location(tmp_location) and \
-               tmp_location != pervious_location:
-                possible_location.append(tmp_location)
-                
-        if len(possible_location) == 0:
+        if check_location_exit_cars(current_location):
+            possible_location = []
+            locations_to_check = [(-1, -1), (0, -1), (1, -1),
+                                  (-1, 0), (1, 0),
+                                  (-1, 1), (0, 1), (1, 1)]
+            for location_offset in locations_to_check:
+                tmp_location = (current_location[0] + location_offset[0],
+                                current_location[1] + location_offset[1])
+                if tmp_location != pervious_location and \
+                   self.check_location(tmp_location):
+                    possible_location.append(tmp_location)
+                    
+            if len(possible_location) == 0:
+                return (current_location,
+                        self.map_pixels[current_location[0]][current_location[1]].road_type,
+                        self.map_pixels[current_location[0]][current_location[1]].cars)
+            else:
+                new_location = random.choice(possible_location)
+                self.map_pixels[new_location[0]][new_location[1]].cars += 1
+                self.map_pixels[current_location[0]][current_location[1]].cars -= 1
+                self.map_pixels[current_location[0]][current_location[1]].exit_cars += 1
+                return (new_location,
+                        self.map_pixels[new_location[0]][new_location[1]].road_type,
+                        self.map_pixels[new_location[0]][new_location[1]].cars)
+        else:
             return (current_location,
                     self.map_pixels[current_location[0]][current_location[1]].road_type,
                     self.map_pixels[current_location[0]][current_location[1]].cars)
-        else:
-            new_location = random.choice(possible_location)
-            self.map_pixels[new_location[0]][new_location[1]].cars += 1
-            self.map_pixels[current_location[0]][current_location[1]].cars -= 1
-            self.map_pixels[current_location[0]][current_location[1]].exit_cars += 1
-            return (new_location,
-                    self.map_pixels[new_location[0]][new_location[1]].road_type,
-                    self.map_pixels[new_location[0]][new_location[1]].cars)
+
         
             
     def reset_exit_cars(self):

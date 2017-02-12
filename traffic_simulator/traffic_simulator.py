@@ -47,13 +47,11 @@ class Producer(object):
                     current_speed = 0
             else:
                 current_speed += speed_offset
-                if road_type == 1:
-                    if current_speed > 30:
-                        current_speed = 30
-                elif road_type == 2:
-                    if current_speed > 50:
-                        current_speed = 50
-                elif current_speed > 70:
+                if road_type == 1 and current_speed > 30:
+                    current_speed = 30
+                elif road_type == 2 and current_speed > 50:
+                    current_speed = 50
+                elif road_type == 3 and current_speed > 70:
                     current_speed = 70
             return current_speed
 
@@ -98,17 +96,17 @@ class Producer(object):
                 
                 (new_location,
                  road_type,
-                 number_of_car) = my_map.move_location(my_cars[idx].current_location,
-                                                       my_cars[idx].pervious_location)                    
+                 loc_cars) = my_map.move_location(my_cars[idx].current_location,
+                                                  my_cars[idx].pervious_location)                    
                 if new_location[0] > 0 and new_location[0] < 899 and \
                    new_location[1] > 0 and new_location[1] < 899 and \
-                   my_cars[idx].distance_to_end != 0:
+                   my_cars[idx].distance_to_end > 0:
                     if new_location == my_cars[idx].current_location:
                         new_speed = 0
                     else:
                         new_speed = generate_new_speed(my_cars[idx].speed,
                                                        road_type,
-                                                       number_of_car)
+                                                       loc_cars)
                     my_cars[idx].move(new_speed, new_location)
                 else:
                     my_cars[idx] = respawn_new_car(my_cars[idx].car_id,
