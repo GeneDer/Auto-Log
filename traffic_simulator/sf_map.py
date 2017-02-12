@@ -116,7 +116,7 @@ class SFMap:
         within the possible locations. If no possible location,
         the car will stay in place.
         """
-        if check_location_exit_cars(current_location):
+        if self.check_location_exit_cars(current_location):
             possible_location = []
             locations_to_check = [(-1, -1), (0, -1), (1, -1),
                                   (-1, 0), (1, 0),
@@ -125,7 +125,7 @@ class SFMap:
                 tmp_location = (current_location[0] + location_offset[0],
                                 current_location[1] + location_offset[1])
                 if tmp_location != pervious_location and \
-                   self.check_location(tmp_location):
+                   self.check_location_cars(tmp_location):
                     possible_location.append(tmp_location)
                     
             if len(possible_location) == 0:
