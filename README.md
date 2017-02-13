@@ -4,7 +4,7 @@ Session 2017A
 
 ## Motivation
 Traffic is always a headache for getting from point A to point B. It is especially
-worse in the Bay Area durning the rush hours. Imagine you can have data from all 
+worse in the Bay Area during the rush hours. Imagine you can have data from all 
 vehicles driving on the road. What can you do with it? Simply visualize the traffic
 density and average speed of each region can help city planer make better roads
 and reduce congestions. Delivery services can better route their trucks and increase
@@ -13,6 +13,25 @@ experience.
 
 ## Data Pipeline
 ![Alt text](miscellaneous/pipeline.png?raw=true "Optional Title")
+
+## Architecture
+The data is assumed pumping into Kafka cluster from mutiple devices. Each message 
+contains lat, long, car id, time, and speed. Spark streaming then consume 20 seconds
+worth of messages and map a grid id to each message. This mapping can also be done 
+on street id if the condition of specific road is perfered. The filtering of time will 
+also be done in case of trandfer delay. The processed messages then being aggregate
+by grid id, calculate the unique count and average speed, and store the resulting 
+calculations in Redis. Each message is also grouped by location and time for generate
+the graph. The graph information are stored in the db 1 of the same Redis server and
+being flush and recomputed every 20 seconds. In the frontend, when the map is being 
+requested, Flask will query all data from db 0 and generate the location information 
+for each grid for display on the map. Query one will convert the lat and long 
+back to the grid id and make the query. Query all will query all data and generate json 
+structure for all grid information. When the graph is requested, Flask will query all 
+data from db 1 and generate the connection json file. The number of connection is 
+bounded by 5000. Then the front end will read the newly generated file and display the
+traffic graph.
+
 
 ## Product
 ![Alt text](miscellaneous/real_time_traffic.png?raw=true "Optional Title")
