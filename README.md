@@ -34,6 +34,9 @@ traffic graph.
 
 
 ## Product
+- All demo were presented at this point and AWS servers were taken down. Please refer to the Youtube video for the 
+[product](https://youtu.be/DCf3mRKyO_8).
+
 ![Alt text](miscellaneous/real_time_traffic.png?raw=true "Optional Title")
 - Live demo is at [http://autolog.online/](http://autolog.online/)
 - Query traffic data for a specific location with 
